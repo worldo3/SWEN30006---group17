@@ -24,8 +24,8 @@ Thursday, May 7th. Second Meeting:
 		+ Background Data retrieval
 		+ One for each of the 3 functions in the project specification
 	=> Component Diagram (High level component diagram)
-		> Major MVC components and its sub component
-		> interface between each component and their methods
+		+ Major MVC components and its sub component
+		+ interface between each component and their methods
 - discussion on classes needed based on the 3 main functions for the application
 	=> /weather/locations (display detail of all the locations stored)
 	=> /weather/data/:location_id/:date or /:post_code/:date (display data for the specified location)
