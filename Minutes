@@ -8,3 +8,27 @@ Thursday, April 30th. First meeting:
 - todos:
 	=> catch up and understand what we should be doing for our design
 	=> agree on the next meeting
+
+############################################	
+	
+Thursday, May 7th. Second Meeting:
+- main focus on class, component, and sequence diagrams
+	=> Class Diagram (low level detailed diagram)
+		+ Location 
+		+ Description (Location with speicific date/time for processing queries)
+		+ Measurement Class for each measurement (ex. rainfall value, data for predictions, prediction value) 
+		+ Application/Weather Controller (GET /weather/...)
+			> all the functions for communication with the view
+			> probably 5 functions needed, according to GET URLs below
+	=> Sequence Diagram (Low level process diagram, interactions and calls)
+	=> Component Diagram (High level component diagram)
+		> Major MVC components and its sub component
+		> interface between each component and their methods
+- discussion on classes needed based on the 3 main functions for the application
+	=> /weather/locations (display detail of all the locations stored)
+	=> /weather/data/:location_id/:date or /:post_code/:date (display data for the specified location)
+	=> /weather/prediction/:location_id/:period or /:post_code/:period (weather prediction for the specified location)
+- brief discussion over the web view and forms (location_id & post code difference)
+** issues : post_code vs location_id. 
+
+#############################################
