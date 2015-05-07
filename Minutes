@@ -21,6 +21,8 @@ Thursday, May 7th. Second Meeting:
 			> all the functions for communication with the view
 			> probably 5 functions needed, according to GET URLs below
 	=> Sequence Diagram (Low level process diagram, interactions and calls)
+		+ Background Data retrieval
+		+ One for each of the 3 functions in the project specification
 	=> Component Diagram (High level component diagram)
 		> Major MVC components and its sub component
 		> interface between each component and their methods
