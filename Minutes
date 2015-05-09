@@ -32,5 +32,9 @@ Thursday, May 7th. Second Meeting:
 	=> /weather/prediction/:location_id/:period or /:post_code/:period (weather prediction for the specified location)
 - brief discussion over the web view and forms (location_id & post code difference)
 ** issues : post_code vs location_id. 
+- Distributed Work Load:
+	=> Jordan: Sequence Diagram
+	=> Wittawin: Component Diagram
+	=> Vincent: Class Diagram
 
 #############################################
