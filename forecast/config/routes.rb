@@ -5,6 +5,16 @@ Rails.application.routes.draw do
 
   get 'weathers/prediction'
 
+  get 'weathers/get_location'
+
+  get 'weathers/get_prediction_postcode'
+
+  get 'weathers/get_prediction_latlong'
+
+  get 'weathers/get_data_id'
+
+  get 'weathers/get_data_postcode'
+
   resources :weathers
 
   # The priority is based upon order of creation: first created -> highest priority.
