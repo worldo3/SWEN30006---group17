@@ -38,3 +38,20 @@ Thursday, May 7th. Second Meeting:
 	=> Vincent: Class Diagram
 
 #############################################
+
+Thursday, May 14th. Third Meeting:
+- Create application skeleton folder
+- Create Web Views for the application 
+- Split the workload:
+	=> locations & data: Wittawin & Vincent
+	=> predictions: Jordan
+- Problem encountered: postcode parsing and data matching
+- Wittawin responsible for unloading the skeleton
+
+#############################################
+
+Sunday, May 24th. Unofficial meeting (Wittawin & Vincent's apartment)
+- Vincent uploaded the Web views
+- HTML parsing for the postcode and finding postcode algorithm
+	=> (assign postcode with the closest coordinate to the bom weather stations)
+- 
