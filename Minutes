@@ -51,7 +51,10 @@ Thursday, May 14th. Third Meeting:
 #############################################
 
 Sunday, May 24th. Unofficial meeting (Wittawin & Vincent's apartment)
-- Vincent uploaded the Web views
 - HTML parsing for the postcode and finding postcode algorithm
 	=> (assign postcode with the closest coordinate to the bom weather stations)
-- 
+- Finish weathers/location, list all the location and their details
+- Started working on weathers/data
+- Vincent uploaded the app
+
+#############################################
