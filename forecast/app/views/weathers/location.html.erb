@@ -1,2 +1,32 @@
-<h1>Weathers#location</h1>
-<p>Find me in app/views/weathers/location.html.erb</p>
+<h3>List Location</h3>
+
+
+<table>
+  <thead>
+    <tr>
+      <th width="30%">Name</th>
+      <th colspan="5">Postcode</th>
+      <th colspan="5">Latitude</th>
+      <th colspan="5">Longitude</th>
+      <th colspan="5">LastUpdate</th>
+      <th colspan="5"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+  	<% @locations.each do |location| %>
+  		<tr>
+  		 	<td colspan="5"><%= location.location_id %></td>
+  		 	<td colspan="5"><%= location.post_code%></td>
+            <td colspan="5"><%= location.lat%></td>
+            <td colspan="5"><%= location.long%></td>
+            <td colspan="5"><%= location.latest_update%></td>
+        </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br/>
+
+<%= link_to 'Home Page', weathers_path %>
+

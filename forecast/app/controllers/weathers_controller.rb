@@ -4,6 +4,7 @@ class WeathersController < ApplicationController
   end
 
   def location
+  	@locations = Location.all
   end
 
   def data
