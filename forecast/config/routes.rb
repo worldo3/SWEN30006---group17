@@ -11,7 +11,9 @@ Rails.application.routes.draw do
 
   get 'weathers/get_prediction_latlong'
 
-  get 'weathers/get_data_id'
+  get 'weathers/data_form' 
+  
+  get 'weathers/search' => 'weathers#search'
 
   get 'weathers/get_data_postcode'
 

@@ -4,23 +4,23 @@
 <table>
   <thead>
     <tr>
-      <th width="30%">Name</th>
-      <th colspan="5">Postcode</th>
-      <th colspan="5">Latitude</th>
-      <th colspan="5">Longitude</th>
-      <th colspan="5">LastUpdate</th>
-      <th colspan="5"></th>
+      <th width="15%">Name</th>
+      <th width="10%">Postcode</th>
+      <th width="10%">Latitude</th>
+      <th width="10%">Longitude</th>
+      <th width="10%">LastUpdate</th>
+      <th width="10%"></th>
     </tr>
   </thead>
 
   <tbody>
   	<% @locations.each do |location| %>
   		<tr>
-  		 	<td colspan="5"><%= location.location_id %></td>
-  		 	<td colspan="5"><%= location.post_code%></td>
-            <td colspan="5"><%= location.lat%></td>
-            <td colspan="5"><%= location.long%></td>
-            <td colspan="5"><%= location.latest_update.strftime("%I:%M%p %d-%m-%y")%></td>
+  		 	<td width="10%"><%= location.location_id %></td>
+  		 	<td width="10%"><%= location.post_code%></td>
+            <td width="10%"><%= location.lat%></td>
+            <td width="10%"><%= location.long%></td>
+            <td width="10%"><%= location.latest_update.strftime("%I:%M%p %d-%m-%y")%></td>
         </tr>
     <% end %>
   </tbody>

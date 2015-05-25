@@ -1,5 +1,32 @@
-<h1>Weathers#data</h1>
-<p>Find me in app/views/weathers/data.html.erb</p>
+<h1>Data Result</h1>
 
-<li><%= link_to 'by location id', weathers_get_data_id_path %></li>
-<li><%= link_to 'by postcode', weathers_get_data_postcode_path %></li>
+<table>
+  <thead>
+    <tr>
+      <th width="15%">Location</th>
+      <th width="10%">Time</th>
+      <th width="10%">Temperature</th>
+      <th width="10%">Rainfall</th>
+      <th width="10%">Windspeed</th>
+      <th width="10%">Winddirection</th>
+      <th width="10%"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @locations.each do |location| %>
+      <% @descriptions.each do |forecast| %>
+        <%if forecast.location_id == location.id %>
+          <tr>
+            <td width="15%"><%= location.location_id %></td>
+            <td width="10%"><%= forecast.datetime.strftime("%I:%M%p %d-%m-%y")%></td>
+            <td width="10%"><%= forecast.temp%></td>
+            <td width="10%"><%= forecast.rainfall%></td>
+            <td width="10%"><%= forecast.windSpeed%></td>
+            <td width="10%"><%= forecast.windDirection%></td>
+          </tr>
+        <% end %>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
