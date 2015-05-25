@@ -5,6 +5,8 @@ class WeathersController < ApplicationController
 
   def location
   	@locations = Location.all
+  	time = Time.now
+  	@date = time.strftime("%d-%m-%y")
   end
 
   def data

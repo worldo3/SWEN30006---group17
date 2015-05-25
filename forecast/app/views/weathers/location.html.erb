@@ -1,6 +1,6 @@
 <h3>List Location</h3>
 
-
+<h4>Date:<%= @date %></h4>
 <table>
   <thead>
     <tr>
@@ -20,7 +20,7 @@
   		 	<td colspan="5"><%= location.post_code%></td>
             <td colspan="5"><%= location.lat%></td>
             <td colspan="5"><%= location.long%></td>
-            <td colspan="5"><%= location.latest_update%></td>
+            <td colspan="5"><%= location.latest_update.strftime("%I:%M%p %d-%m-%y")%></td>
         </tr>
     <% end %>
   </tbody>
