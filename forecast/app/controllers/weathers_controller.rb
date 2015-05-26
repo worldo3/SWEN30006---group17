@@ -36,9 +36,12 @@ class WeathersController < ApplicationController
       @result = "by_postcode"
       @name = params[:by_postcode].to_i
       @locations = Location.where("post_code = '%i' ", "#{@name}")
+      if @locations.all? &:blank?
+        @name = "#{@name} - There is no weather station in this postcode area stored in our database. Please try again."
+      end
       @descriptions = Description.all
     end
-    
+
   end
 
   def prediction

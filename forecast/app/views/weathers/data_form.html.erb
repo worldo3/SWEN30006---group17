@@ -6,7 +6,7 @@
   <p>
   	<%= label_tag(:by_id, "Search for:") %>
     <%= select_tag :by_location, options_from_collection_for_select(@locations, :location_id, :location_id) %>
-    <%= submit_tag "Search", :name => nil%>
+    <%= submit_tag "Submit", :name => nil%>
   </p>
 <% end %>
 
@@ -16,7 +16,7 @@
   <p>
   	<%= label_tag(:by_post, "Search for:") %>
     <%= select_tag :by_postcode, options_for_select(3000..3999) %>
-    <%= submit_tag "Search", :name => nil%>
+    <%= submit_tag "Submit", :name => nil%>
   </p>
 <% end %>
 
