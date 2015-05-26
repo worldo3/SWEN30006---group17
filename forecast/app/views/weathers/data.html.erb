@@ -1,32 +1,9 @@
-<h1>Data Result</h1>
+<% if (@result == "by_location") %>
+	<%= render 'data_id_result' %>
+<% else %>
+	<%= render 'data_postcode_result' %>
+<% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th width="15%">Location</th>
-      <th width="10%">Time</th>
-      <th width="10%">Temperature</th>
-      <th width="10%">Rainfall</th>
-      <th width="10%">Windspeed</th>
-      <th width="10%">Winddirection</th>
-      <th width="10%"></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @locations.each do |location| %>
-      <% @descriptions.each do |forecast| %>
-        <%if forecast.location_id == location.id %>
-          <tr>
-            <td width="15%"><%= location.location_id %></td>
-            <td width="10%"><%= forecast.datetime.strftime("%I:%M%p %d-%m-%y")%></td>
-            <td width="10%"><%= forecast.temp%></td>
-            <td width="10%"><%= forecast.rainfall%></td>
-            <td width="10%"><%= forecast.windSpeed%></td>
-            <td width="10%"><%= forecast.windDirection%></td>
-          </tr>
-        <% end %>
-      <% end %>
-    <% end %>
-  </tbody>
-</table>
+</br><%= link_to 'Back to Search', weathers_data_form_path %></br>
+<%= link_to 'Home', weathers_path %>

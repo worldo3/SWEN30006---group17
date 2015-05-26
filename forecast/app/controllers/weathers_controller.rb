@@ -10,8 +10,17 @@ class WeathersController < ApplicationController
   end
 
   def data
-    @locations = Location.where("location_id LIKE ?", "%#{params[:by_location]}%")
-    @descriptions = Description.all
+    if params[:by_location]
+      @result = "by_location"
+      @name = params[:by_location]
+      @locations = Location.where("location_id LIKE ?", "%#{params[:by_location]}%")
+      @descriptions = Description.all
+    elsif params[:by_postcode]
+      @result = "by_postcode"
+      @name = params[:by_postcode].to_i
+      @locations = Location.where("post_code = '%i' ", "#{@name}")
+      @descriptions = Description.all
+    end
   end
 
   def prediction

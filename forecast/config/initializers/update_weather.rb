@@ -6,15 +6,13 @@ require 'rufus/scheduler'
 
 GOVURL = 'http://www.bom.gov.au/vic/observations/melbourne.shtml' 
 POSTCODE ='https://bitbucket.org/IvanKruchkoff/misc/raw/4738589aa0d9d3477813734db050eaead8476e56/postcodes/postcodes_pretty_print.json'
-API_KEY = '8ffc62bb336a5fae1a96e1ac9a950b8b' 
-FORECASTURL = 'https://api.forecast.io/forecast' 
+API_KEY = '8ffc62bb336a5fae1a96e1ac9a950b8b'  
 TIME = Time.now.to_i 
 
 #regex
 lat_regex = /Lat: -?\d*.?\d*/
 lon_regex = /Lon: -?\d*.?\d*/
 
-#arrays
 #arrays
 id_arr = Array.new 
 url_arr = Array.new 
