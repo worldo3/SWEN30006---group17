@@ -50,5 +50,16 @@ class WeathersController < ApplicationController
   def data_form
     @locations = Location.all
     @descriptions = Description.all
+    #to be inputed to form
+    @dates = Array.new
+    @descriptions.each do |forecast|
+      @dates.push(forecast.datetime.strftime("%d-%m-%y"))
+    end
+    @dates = @dates.sort.uniq
+    @postcodes = Array.new
+    @locations.each do |station|
+      @postcodes.push(station.post_code)
+    end
+    @postcodes = @postcodes.sort.uniq
   end
 end
