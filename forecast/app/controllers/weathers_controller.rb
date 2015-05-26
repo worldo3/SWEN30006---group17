@@ -38,6 +38,7 @@ class WeathersController < ApplicationController
       @locations = Location.where("post_code = '%i' ", "#{@name}")
       @descriptions = Description.all
     end
+    
   end
 
   def prediction
