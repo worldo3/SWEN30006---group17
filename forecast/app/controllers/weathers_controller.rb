@@ -10,11 +10,19 @@ class WeathersController < ApplicationController
   end
 
   def data
+
+    @searched_date = params[:by_date]
+    @result_date = Array.new
+    @descriptions = Description.all
+    @descriptions.each do |forecast|
+      if forecast.datetime.strftime("%d-%m-%y") == @searched_date
+        @result_date.push(forecast)
+      end
+    end
     if params[:by_location]
       @result = "by_location"
       @name = params[:by_location]
       @locations = Location.where("location_id LIKE ?", "%#{params[:by_location]}%")
-      @descriptions = Description.all
 
       #find current temperature
       now = Time.now
@@ -26,10 +34,13 @@ class WeathersController < ApplicationController
             if (now - forecast.datetime) < 1800 && (now-forecast.datetime) < min_difference
               @current_temp = forecast.temp.to_s
               @min_difference = now - forecast.datetime
+              @location_now = forecast
             end
           end
         end
       end
+    
+
 
 
     elsif params[:by_postcode]
@@ -39,7 +50,6 @@ class WeathersController < ApplicationController
       if @locations.all? &:blank?
         @name = "#{@name} - There is no weather station in this postcode area stored in our database. Please try again."
       end
-      @descriptions = Description.all
     end
 
   end
@@ -56,6 +66,7 @@ class WeathersController < ApplicationController
       @dates.push(forecast.datetime.strftime("%d-%m-%y"))
     end
     @dates = @dates.sort.uniq
+
     @postcodes = Array.new
     @locations.each do |station|
       @postcodes.push(station.post_code)

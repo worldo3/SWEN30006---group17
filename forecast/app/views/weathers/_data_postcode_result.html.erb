@@ -1,6 +1,7 @@
-<h1>Data Result for Postcode:</h1>
+<h1>Data Result</h1>
 
-<h3><%= @name %></h3>
+<h3>Date: <%= @searched_date %></h3>
+<h3>Postcode: <%= @name %></h3>
 
 <h4>Location Detail:</h5>
 <% @locations.each do |location| %>
@@ -23,7 +24,7 @@
 
     <tbody>
       <% @locations.each do |location| %>
-        <% @descriptions.each do |forecast| %>
+        <% @result_date.each do |forecast| %>
           <%if forecast.location_id == location.id %>
             <tr>
               <td width="10%"><%= forecast.temp%></td>
