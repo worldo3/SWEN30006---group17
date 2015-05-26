@@ -1,6 +1,7 @@
 if @result == "by_location"
 	json.date @searched_date
 	json.current_temp @current_temp
+	json.condition @condition
 	@locations.each do |location|
 		json.measurements @descriptions.each do |forecast|
 			if forecast.location_id == location.id
