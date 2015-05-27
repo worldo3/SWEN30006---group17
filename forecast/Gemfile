@@ -15,7 +15,7 @@ gem 'coffee-rails', '~> 4.1.0'
 # gem 'therubyracer', platforms: :ruby
 
 #So it works on windows:
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
