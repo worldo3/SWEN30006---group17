@@ -27,15 +27,14 @@ class WeathersController < ApplicationController
       #find current temperature
       now = Time.now
       min_difference = 999999
-      @current_temp = "N/A"
-      @condition = "N/A"
+      @current_temp = nil
       @locations.each do |location| 
         @descriptions.each do |forecast|
           if forecast.location_id == location.id
             if (now - forecast.datetime) < 1800 && (now-forecast.datetime) < min_difference
               @current_temp = forecast.temp.to_s
               @min_difference = now - forecast.datetime
-              @condition = forecast.condition
+              @location_now = forecast
             end
           end
         end
