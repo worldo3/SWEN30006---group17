@@ -50,11 +50,26 @@ Thursday, May 14th. Third Meeting:
 
 #############################################
 
-Sunday, May 24th. Unofficial meeting (Wittawin & Vincent's apartment)
+Sunday, May 24th - 27th. Unofficial meeting (Wittawin & Vincent's apartment)
+=====
+- Added bootsrap, and models for the app
 - HTML parsing for the postcode and finding postcode algorithm
 	=> (assign postcode with the closest coordinate to the bom weather stations)
 - Finish weathers/location, list all the location and their details
 - Started working on weathers/data
-- Vincent uploaded the app
+- Added json
+=====
+- Completed weathers/data both with post_code and location_id and search by dates
+	=> only shows what is in our database
+	=> added 'current condition'
+- Added json
+=====
+FINALIZED on 27th May
+- Wittawin and Vincent's part of allocated work done.
+=====
+- Both: Brainstorming, planning and application design
+- Vincent: Hard coding
+- Wittawin: HTML formatting
+=====
 
 #############################################
