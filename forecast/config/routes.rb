@@ -1,23 +1,21 @@
 Rails.application.routes.draw do
-  get 'weathers/location'
+  get 'weathers/location' => 'weathers#location', :as=> "weather_location", :path=>"weather/location"
 
-  get 'weathers/data'
+  get 'weathers/data' => 'weathers#data', :as=> "weather_data", :path=>"weather/data"
 
   get 'weathers/prediction'
-
-  get 'weathers/get_location'
 
   get 'weathers/get_prediction_postcode'
 
   get 'weathers/get_prediction_latlong'
 
-  get 'weathers/data_form' 
+  get 'weathers/data_form' => 'weathers#data_form', :as=> "weather_data_form", :path=>"weather/data_form"
   
   get 'weathers/search' => 'weathers#search'
 
   get 'weathers/get_data_postcode'
 
-  resources :weathers
+  resources :weathers, :path=>'weather'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

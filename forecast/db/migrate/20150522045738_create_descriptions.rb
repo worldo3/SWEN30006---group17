@@ -6,6 +6,7 @@ class CreateDescriptions < ActiveRecord::Migration
       t.float :windSpeed
       t.string :windDirection
       t.time :datetime
+      t.string :condition
 
       t.timestamps null: false
     end

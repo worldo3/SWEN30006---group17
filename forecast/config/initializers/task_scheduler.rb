@@ -83,6 +83,25 @@ scheduler.every("30m") do
 		area_url = data.css('a')[0]['href']
 		url_arr.push("http://www.bom.gov.au#{area_url}")
 
+		url = "http://www.bom.gov.au#{area_url}"
+		area_doc_sum= Nokogiri::HTML(open(url))
+		area_data_sum = area_doc_sum.css('table')[0]
+		lon_sum = lon_regex.match(area_data_sum.text)[0]
+		lat_sum = lat_regex.match(area_data_sum.text)[0]
+
+		lat_long = ("#{lat_sum[5..lat_sum.length]},#{lon_sum[5..lon_sum.length]}")
+
+		lon_sum = lon_sum[5..lon_sum.length].to_f
+		lat_sum = lat_sum[5..lat_sum.length].to_f
+
+		#open forecastio
+		forecast = JSON.parse(open("#{FORECASTURL}/#{API_KEY}/#{lat_long},#{TIME}?units=si").read)
+		forecast = forecast["currently"]
+
+		#condition
+		tempDesc.condition = forecast["summary"]
+
+
 		tempDesc.save
 	end
 
