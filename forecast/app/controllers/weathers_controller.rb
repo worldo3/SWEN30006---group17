@@ -1,16 +1,17 @@
+require('matrix')
+
 class WeathersController < ApplicationController
 
   def index
   end
 
   def location
-  	@locations = Location.all
-  	time = Time.now
-  	@date = time.strftime("%d-%m-%y")
+    @locations = Location.all
+    time = Time.now
+    @date = time.strftime("%d-%m-%y")
   end
 
   def data
-
     @searched_date = params[:by_date]
     @result_date = Array.new
     @descriptions = Description.all
@@ -23,27 +24,21 @@ class WeathersController < ApplicationController
       @result = "by_location"
       @name = params[:by_location]
       @locations = Location.where("location_id LIKE ?", "%#{params[:by_location]}%")
-
       #find current temperature
       now = Time.now
       min_difference = 999999
-      @current_temp = "N/A"
-      @condition = "N/A"
-      @locations.each do |location| 
+      @current_temp = nil
+      @locations.each do |location|
         @descriptions.each do |forecast|
           if forecast.location_id == location.id
             if (now - forecast.datetime) < 1800 && (now-forecast.datetime) < min_difference
               @current_temp = forecast.temp.to_s
               @min_difference = now - forecast.datetime
-              @condition = forecast.condition
+              @location_now = forecast
             end
           end
         end
       end
-    
-
-
-
     elsif params[:by_postcode]
       @result = "by_postcode"
       @name = params[:by_postcode].to_i
@@ -52,10 +47,33 @@ class WeathersController < ApplicationController
         @name = "#{@name} - There is no weather station in this postcode area stored in our database. Please try again."
       end
     end
-
   end
 
   def prediction
+    @locations = Location.all
+    @render = false
+    if params.count > 2
+      @render = true
+      xy = []
+      if params[:by_location]
+        descriptions = Description.all.where(location_id: params[:by_location]).order(:datetime)
+        @location = @locations.where(id: params[:by_location]).first.location_id
+      elsif params[:lat] and params[:long]
+        descriptions = Description.all.where(location_id: closest(params[:lat].to_f,params[:long].to_f)).order(:datetime)
+        @location = @locations.where(id: closest(params[:lat].to_f,params[:long].to_f)).first.location_id
+      else
+        descriptions = []
+      end
+      descriptions.each do |description|
+        xy << [(description.datetime.to_time.to_i - Time.now.to_i)/60,description.temp.to_f,description.rainfall,description.windSpeed,description.windDirection,description.location_id]
+      end
+      xy = xy.select{|x| x[0] > -181}
+      if xy.count == 0
+        description = descriptions.first
+        xy << [(description.datetime.to_time.to_i - Time.now.to_i)/60,description.temp.to_f,description.rainfall,description.windSpeed,description.windDirection,description.location_id]
+      end
+      @results = test(xy,params[:by_time].to_i,((9*60) - Time.now.seconds_since_midnight/60).to_i)
+    end
   end
 
   def data_form
@@ -74,4 +92,58 @@ class WeathersController < ApplicationController
     end
     @postcodes = @postcodes.sort.uniq
   end
+end
+
+def closest(lat,long)
+  closest = Location.all.map{|location| [location.id,((location.lat.to_f - lat)**2 + (location.long.to_f - long)**2)**0.5]}.sort_by{|x| x[1]}[0][0]
+end
+
+def unnegate(num)
+  if num < 0
+    unnegate = 0
+  else
+    unnegate = num
+  end
+end
+
+def test(xy_array,time,mins_since_9)
+  results = [(0..time/10).map{|x| x*10}]
+  if xy_array.count == 1
+    results << (1..4).map{|y| (0..time/10).map{|x| xy_array[0][y]}}[0]
+  elsif xy_array.count == 0
+    4.times{results << (0..time/10).map{|x| nil}}
+  else
+    temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[1]},xy_array.count - 2)
+    results << (0..time/10).map{|x| ((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1)}
+    if xy_array.select{|x| x[2] == nil}.count > 0
+      results << (0..time/10).map{|x| nil}
+    else
+      if xy_array.select{|x| x[0] >= mins_since_9}.count > 0 and xy_array.select{|x| x[0] < mins_since_9}.count > 0
+        rain_at_9 = xy_array.select{|x| x[0] < mins_since_9}.last[2]
+        temp = xy_array.select{|x| x[0] < mins_since_9}.map{|x| x[2]}
+        temp.concat(xy_array.select{|x| x[0] >= mins_since_9}.map{|x| x[2] + rain_at_9})
+        temp = regress_poly(xy_array.map{|x| x[0]},temp,1)
+        temp = (0..time/10).map{|x| ((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1)}
+        results << temp.clone
+      else
+        temp = regress_poly(xy_array.map{|x| x[0].to_f},xy_array.map{|x| x[2].to_f},1) #xy_array.count - 1)
+        temp = (0..time/10).map{|x| unnegate(((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1))}
+        if mins_since_9 > -1 and mins_since_9 < time
+          temp_at_9 =  temp[(mins_since_9/10).to_i].to_f
+          ((mins_since_9/10).to_i..(temp.count-1)).each{|x| temp[x] -= temp_at_9}
+        end
+        results << temp.clone
+      end
+    end
+    temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2)
+    results << (0..time/10).map{|x| unnegate(((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1))}
+    results << (0..time/10).map{|x| results[3][x] == 0 ? "CALM" : xy_array[xy_array.count -1][4]}
+  end
+end
+
+def regress_poly x_array, y_array, degree #Taken from the project sheet. Simple and effective.
+  x_data = x_array.map { |x_i| (0..degree).map { |pow| (x_i**pow).to_f } }
+  mx = Matrix[*x_data]
+  my = Matrix.column_vector(y_array)
+  regress_poly = ((mx.t * mx).inv * mx.t * my).transpose.to_a[0]
 end

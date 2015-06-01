@@ -1,5 +1,53 @@
-<h1>Weathers#prediction</h1>
-<p>Find me in app/views/weathers/prediction.html.erb</p>
+<h1>Data Form</h1>
 
-<li><%= link_to 'by postcode', weathers_get_prediction_postcode_path %></li>
-<li><%= link_to 'by lat and long', weathers_get_prediction_latlong_path %></li>
+<h4> Search by Location Name </h4>
+
+<%= form_tag weathers_prediction_path, :method => 'get' do %>
+    <p>
+      <%= label_tag(:by_id, "Search for:") %>
+      <%= select_tag :by_location, options_from_collection_for_select(@locations, :id, :location_id) %>
+      <%= select_tag :by_time,options_for_select([10,30,60,90]) %>
+      <%= submit_tag "Submit", :name => nil%>
+    </p>
+<% end %>
+
+
+<h4> Search by Postcode </h4>
+<%= form_tag weathers_prediction_path, :method => 'get' do %>
+    <p>
+      <%= label_tag(:by_latlong, "Search for:") %>
+      <%= number_field_tag  :lat, -37.83, step: 'any'%>
+      <%= number_field_tag  :long, 144.98, step: 'any'%>
+      <%= select_tag :by_time, options_for_select([10,30,60,90]) %>
+      <%= submit_tag "Submit", :name => nil%>
+    </p>
+<% end %>
+
+<%= link_to 'home', weathers_path %>
+
+<% if @render %>
+    <h1> Predictions for <%= @location %></h1>
+    <table>
+      <thead>
+      <tr>
+        <th width="15%">Time From now</th>
+        <th width="10%">Temp</th>
+        <th width="10%">Rainfall</th>
+        <th width="10%">WindSpeed</th>
+        <th width="10%">Wind Direction</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% (0..@results[1].count).map{|x| @results.map{|y| y[x]}}.each do |prediction| %>
+          <tr>
+            <td width="10%"><%= prediction[0] %></td>
+            <td width="10%"><%= prediction[1] %></td>
+            <td width="10%"><%= prediction[2] %></td>
+            <td width="10%"><%= prediction[3] %></td>
+            <td width="10%"><%= prediction[4] %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+<% end %>
