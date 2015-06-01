@@ -32,20 +32,28 @@
       <tr>
         <th width="15%">Time From now</th>
         <th width="10%">Temp</th>
+        <th width="5%">(probability)</th>
         <th width="10%">Rainfall</th>
+        <th width="5%">(probability)</th>
         <th width="10%">WindSpeed</th>
+        <th width="5%">(probability)</th>
         <th width="10%">Wind Direction</th>
+        <th width="5%">(probability)</th>
       </tr>
       </thead>
 
       <tbody>
-      <% (0..@results[1].count).map{|x| @results.map{|y| y[x]}}.each do |prediction| %>
+      <% (0..@predictions[1].count).map{|x| @predictions.map{|y| y[x]}}.each do |prediction| %>
           <tr>
             <td width="10%"><%= prediction[0] %></td>
             <td width="10%"><%= prediction[1] %></td>
             <td width="10%"><%= prediction[2] %></td>
             <td width="10%"><%= prediction[3] %></td>
             <td width="10%"><%= prediction[4] %></td>
+            <td width="10%"><%= prediction[5] %></td>
+            <td width="10%"><%= prediction[6] %></td>
+            <td width="10%"><%= prediction[7] %></td>
+            <td width="10%"><%= prediction[8] %></td>
           </tr>
       <% end %>
       </tbody>

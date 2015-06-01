@@ -67,12 +67,13 @@ class WeathersController < ApplicationController
       descriptions.each do |description|
         xy << [(description.datetime.to_time.to_i - Time.now.to_i)/60,description.temp.to_f,description.rainfall,description.windSpeed,description.windDirection,description.location_id]
       end
-      xy = xy.select{|x| x[0] > -181}
+      xy = xy.select{|x| x[0] > -31}
+      @descriptions = xy.clone
       if xy.count == 0
         description = descriptions.first
         xy << [(description.datetime.to_time.to_i - Time.now.to_i)/60,description.temp.to_f,description.rainfall,description.windSpeed,description.windDirection,description.location_id]
       end
-      @results = test(xy,params[:by_time].to_i,((9*60) - Time.now.seconds_since_midnight/60).to_i)
+      @predictions = test(xy,params[:by_time].to_i,((9*60) - Time.now.seconds_since_midnight/60).to_i)
     end
   end
 
@@ -94,6 +95,14 @@ class WeathersController < ApplicationController
   end
 end
 
+def variance(input,actual)
+  x = 0.to_f
+  [input.length,actual.length].min.times do |y|
+    x += (input[y].to_f-actual[y].to_f)**2
+  end
+  variance = x
+end
+
 def closest(lat,long)
   closest = Location.all.map{|location| [location.id,((location.lat.to_f - lat)**2 + (location.long.to_f - long)**2)**0.5]}.sort_by{|x| x[1]}[0][0]
 end
@@ -109,12 +118,20 @@ end
 def test(xy_array,time,mins_since_9)
   results = [(0..time/10).map{|x| x*10}]
   if xy_array.count == 1
-    results << (1..4).map{|y| (0..time/10).map{|x| xy_array[0][y]}}[0]
+    (1..4).each do |y|
+      results << []
+      (time/10 + 1).times {results[-1] << xy_array[0][y]}
+      results << (0..time/10).map{|x| (10-x).to_f/10}
+    end
   elsif xy_array.count == 0
-    4.times{results << (0..time/10).map{|x| nil}}
+    4.times do
+      results << (0..time/10).map{|x| nil}
+      results << (0..time/10).map{|x| "N/A"}
+    end
   else
-    temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[1]},xy_array.count - 2)
+    temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[1]},xy_array.count - 2,false)
     results << (0..time/10).map{|x| ((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1)}
+    results << (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[1]},xy_array.count - 2,true)))**(y.to_f/4)).round(2)}
     if xy_array.select{|x| x[2] == nil}.count > 0
       results << (0..time/10).map{|x| nil}
     else
@@ -122,28 +139,42 @@ def test(xy_array,time,mins_since_9)
         rain_at_9 = xy_array.select{|x| x[0] < mins_since_9}.last[2]
         temp = xy_array.select{|x| x[0] < mins_since_9}.map{|x| x[2]}
         temp.concat(xy_array.select{|x| x[0] >= mins_since_9}.map{|x| x[2] + rain_at_9})
-        temp = regress_poly(xy_array.map{|x| x[0]},temp,1)
+        temp = regress_poly(xy_array.map{|x| x[0]},temp,1,false)
+        temp2 = (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},temp,1,true)))**(y.to_f/4)).round(2)}
         temp = (0..time/10).map{|x| ((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1)}
         results << temp.clone
+        results << temp2.clone
+
       else
-        temp = regress_poly(xy_array.map{|x| x[0].to_f},xy_array.map{|x| x[2].to_f},1) #xy_array.count - 1)
+        temp = regress_poly(xy_array.map{|x| x[0].to_f},xy_array.map{|x| x[2].to_f},1,false) #xy_array.count - 1)
+        temp2 = (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0].to_f},xy_array.map{|x| x[2].to_f},1,true)))**(y.to_f/4)).round(2)}
         temp = (0..time/10).map{|x| unnegate(((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1))}
         if mins_since_9 > -1 and mins_since_9 < time
           temp_at_9 =  temp[(mins_since_9/10).to_i].to_f
           ((mins_since_9/10).to_i..(temp.count-1)).each{|x| temp[x] -= temp_at_9}
         end
         results << temp.clone
+        results << temp2.clone
+
       end
     end
-    temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2)
+    temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2,false)
     results << (0..time/10).map{|x| unnegate(((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1))}
-    results << (0..time/10).map{|x| results[3][x] == 0 ? "CALM" : xy_array[xy_array.count -1][4]}
+    results << (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2,true)))**(y.to_f/4)).round(2)}
+    results << (0..time/10).map{|x| results[5][x] == 0 ? "CALM" : xy_array[xy_array.count -1][4]}
+    results << (0..time/10).map{|x| ((1-xy_array.map{|y| y[3]}.uniq.count.to_f/10)**x).round(2)}
   end
+  test = results
 end
 
-def regress_poly x_array, y_array, degree #Taken from the project sheet. Simple and effective.
+def regress_poly x_array, y_array, degree, variance #Taken from the project sheet. Simple and effective.
   x_data = x_array.map { |x_i| (0..degree).map { |pow| (x_i**pow).to_f } }
   mx = Matrix[*x_data]
   my = Matrix.column_vector(y_array)
-  regress_poly = ((mx.t * mx).inv * mx.t * my).transpose.to_a[0]
+  temp = ((mx.t * mx).inv * mx.t * my).transpose.to_a[0]
+  if variance
+    regress_poly = variance(x_array.map{|x_i| (0...temp.count).inject(0) {|r, i| r + temp[i]*(0..degree).map { |pow| (x_i**pow).to_f }[i]}},y_array)
+  else
+    regress_poly = temp.clone
+  end
 end
