@@ -74,7 +74,7 @@ class WeathersController < ApplicationController
       descriptions.each do |description|
         xy << [(description.datetime.to_time.to_i - Time.now.to_i)/60,description.temp.to_f,description.rainfall,description.windSpeed,description.windDirection,description.location_id]
       end
-      xy = xy.select{|x| x[0] > -31}
+      xy = xy.select{|x| x[0] > -181}
       @descriptions = xy.clone
       if xy.count == 0
         description = descriptions.first
@@ -141,7 +141,7 @@ def test(xy_array,time,mins_since_9)
     (1..4).each do |y|
       results << []
       (time/10 + 1).times {results[-1] << xy_array[0][y]}
-      results << (0..time/10).map{|x| 0.9**x}
+      results << (0..time/10).map{|x| (0.9**x).round(2)}
     end
   elsif xy_array.count == 0
     4.times do
@@ -180,8 +180,19 @@ def test(xy_array,time,mins_since_9)
     end
     temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2,false)
     results << (0..time/10).map{|x| unnegate(((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1))}
-    results << (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2,true)))**(y.to_f/10)).round(2)}
-    results << (0..time/10).map{|x| results[5][x] == 0 ? "CALM" : xy_array[xy_array.count -1][4]}
+    results << (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2,true)))**(y.to_f/100)).round(2)}
+    results << (0..time/10).map{|x|
+      if results[5][x] == 0
+        "CALM"
+      elsif results[5][x] > 1 and xy_array[xy_array.count -1][4]=="CALM"
+        if xy_array.map{|y| y[3]}.uniq.reject{|y| y == "CALM"}.count > 0
+          xy_array.map{|y| y[3]}.uniq.reject{|y| y == "CALM"}[0]
+        else
+          "UNPREDICTABLE"
+        end
+      else
+        xy_array[xy_array.count -1][4]
+      end }
     results << (0..time/10).map{|x| ((1-xy_array.map{|y| y[3]}.uniq.count.to_f/10)**x).round(2)}
   end
   test = results
