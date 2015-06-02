@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   get 'weathers/data' => 'weathers#data', :as=> "weather_data", :path=>"weather/data"
 
-  get 'weathers/prediction'
+  get 'weathers/prediction' => 'weathers#prediction', :as=> "weather_prediction", :path=>"weather/prediction"
 
   get 'weathers/get_prediction_postcode'
 

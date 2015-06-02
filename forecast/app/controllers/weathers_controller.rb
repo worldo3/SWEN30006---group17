@@ -66,6 +66,8 @@ class WeathersController < ApplicationController
         descriptions = Description.all.where(location_id: params[:by_location]).order(:datetime)
         @location = @locations.where(id: params[:by_location]).first.location_id
       elsif params[:lat] and params[:long]
+        @lat_searched = params[:lat]
+        @long_searched = params[:long]
         descriptions = Description.all.where(location_id: closest(params[:lat].to_f,params[:long].to_f)).order(:datetime)
         @location = @locations.where(id: closest(params[:lat].to_f,params[:long].to_f)).first.location_id
       else
