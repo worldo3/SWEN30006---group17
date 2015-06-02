@@ -1,4 +1,4 @@
-<h1>Data Form</h1>
+<h1>Prediction Form</h1>
 
 <h4> Search by Location Name </h4>
 
@@ -6,7 +6,7 @@
     <p>
       <%= label_tag(:by_id, "Search for:") %>
       <%= select_tag :by_location, options_from_collection_for_select(@locations, :id, :location_id) %>
-      <%= select_tag :by_time,options_for_select([10,30,60,90]) %>
+      <%= select_tag :by_time,options_for_select([10,30,60,120,180]) %>
       <%= submit_tag "Submit", :name => nil%>
     </p>
 <% end %>
@@ -18,7 +18,7 @@
       <%= label_tag(:by_latlong, "Search for:") %>
       <%= number_field_tag  :lat, -37.83, step: 'any'%>
       <%= number_field_tag  :long, 144.98, step: 'any'%>
-      <%= select_tag :by_time, options_for_select([10,30,60,90]) %>
+      <%= select_tag :by_time, options_for_select([10,30,60,120,180]) %>
       <%= submit_tag "Submit", :name => nil%>
     </p>
 <% end %>
@@ -30,7 +30,7 @@
     <table>
       <thead>
       <tr>
-        <th width="15%">Time From now</th>
+        <th width="10%">Time From now</th>
         <th width="10%">Temp</th>
         <th width="5%">(probability)</th>
         <th width="10%">Rainfall</th>
@@ -39,6 +39,7 @@
         <th width="5%">(probability)</th>
         <th width="10%">Wind Direction</th>
         <th width="5%">(probability)</th>
+        <th width="10%">Time</th>
       </tr>
       </thead>
 
@@ -54,6 +55,10 @@
             <td width="10%"><%= prediction[6] %></td>
             <td width="10%"><%= prediction[7] %></td>
             <td width="10%"><%= prediction[8] %></td>
+            <% if !prediction[0].nil? %>
+            	<td width="10%"><%= @time.strftime("%I:%M%p %d-%m-%y") %></td>
+            	<% @time = @time + 600 %>
+            <% end %>
           </tr>
       <% end %>
       </tbody>

@@ -52,10 +52,17 @@ class WeathersController < ApplicationController
   def prediction
     @locations = Location.all
     @render = false
+    @time = Time.now
+    @temp_data = Array.new
+    @rainfall_data = Array.new
+    @windspeed_data = Array.new
+    @winddirection_data = Array.new
+    @period_data = Array.new
     if params.count > 2
       @render = true
       xy = []
       if params[:by_location]
+        @location_name = @locations.find(params[:by_location]).location_id
         descriptions = Description.all.where(location_id: params[:by_location]).order(:datetime)
         @location = @locations.where(id: params[:by_location]).first.location_id
       elsif params[:lat] and params[:long]
@@ -74,6 +81,19 @@ class WeathersController < ApplicationController
         xy << [(description.datetime.to_time.to_i - Time.now.to_i)/60,description.temp.to_f,description.rainfall,description.windSpeed,description.windDirection,description.location_id]
       end
       @predictions = test(xy,params[:by_time].to_i,((9*60) - Time.now.seconds_since_midnight/60).to_i)
+      (0..@predictions[1].count).map{|x| @predictions.map{|y| y[x]}}.each do |prediction|
+        if !prediction[0].nil?
+          @period_data.push(prediction[0])
+          @temp_data.push(prediction[1])
+          @temp_data.push(prediction[2])
+          @rainfall_data.push(prediction[3])
+          @rainfall_data.push(prediction[4])
+          @windspeed_data.push(prediction[5])
+          @windspeed_data.push(prediction[6])
+          @winddirection_data.push(prediction[7])
+          @winddirection_data.push(prediction[8])
+        end
+      end
     end
   end
 
