@@ -141,7 +141,7 @@ def test(xy_array,time,mins_since_9)
     (1..4).each do |y|
       results << []
       (time/10 + 1).times {results[-1] << xy_array[0][y]}
-      results << (0..time/10).map{|x| (10-x).to_f/10}
+      results << (0..time/10).map{|x| 0.9**x}
     end
   elsif xy_array.count == 0
     4.times do
@@ -151,7 +151,7 @@ def test(xy_array,time,mins_since_9)
   else
     temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[1]},xy_array.count - 2,false)
     results << (0..time/10).map{|x| ((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1)}
-    results << (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[1]},xy_array.count - 2,true)))**(y.to_f/4)).round(2)}
+    results << (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[1]},xy_array.count - 2,true)))**(y.to_f/10)).round(2)}
     if xy_array.select{|x| x[2] == nil}.count > 0
       results << (0..time/10).map{|x| nil}
     else
@@ -160,14 +160,14 @@ def test(xy_array,time,mins_since_9)
         temp = xy_array.select{|x| x[0] < mins_since_9}.map{|x| x[2]}
         temp.concat(xy_array.select{|x| x[0] >= mins_since_9}.map{|x| x[2] + rain_at_9})
         temp = regress_poly(xy_array.map{|x| x[0]},temp,1,false)
-        temp2 = (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},temp,1,true)))**(y.to_f/4)).round(2)}
+        temp2 = (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},temp,1,true)))**(y.to_f/10)).round(2)}
         temp = (0..time/10).map{|x| ((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1)}
         results << temp.clone
         results << temp2.clone
 
       else
         temp = regress_poly(xy_array.map{|x| x[0].to_f},xy_array.map{|x| x[2].to_f},1,false) #xy_array.count - 1)
-        temp2 = (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0].to_f},xy_array.map{|x| x[2].to_f},1,true)))**(y.to_f/4)).round(2)}
+        temp2 = (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0].to_f},xy_array.map{|x| x[2].to_f},1,true)))**(y.to_f/10)).round(2)}
         temp = (0..time/10).map{|x| unnegate(((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1))}
         if mins_since_9 > -1 and mins_since_9 < time
           temp_at_9 =  temp[(mins_since_9/10).to_i].to_f
@@ -180,7 +180,7 @@ def test(xy_array,time,mins_since_9)
     end
     temp = regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2,false)
     results << (0..time/10).map{|x| unnegate(((0..temp.count-1).inject(0){|total,i| total + temp[i]*(x**i)}).round(1))}
-    results << (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2,true)))**(y.to_f/4)).round(2)}
+    results << (0..time/10).map{|y| (1/(1+ Math.exp(regress_poly(xy_array.map{|x| x[0]},xy_array.map{|x| x[3]},2,true)))**(y.to_f/10)).round(2)}
     results << (0..time/10).map{|x| results[5][x] == 0 ? "CALM" : xy_array[xy_array.count -1][4]}
     results << (0..time/10).map{|x| ((1-xy_array.map{|y| y[3]}.uniq.count.to_f/10)**x).round(2)}
   end
