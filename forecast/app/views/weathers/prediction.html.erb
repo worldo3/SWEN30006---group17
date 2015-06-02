@@ -30,6 +30,7 @@
     	<h1> Predictions for <%= @location %></h1>
     <% else  %>
     	<h1> Predictions for: lat: <%=@lat_searched %> lon: <%=@long_searched %></h1>
+    	<h3> Nearest/exact location : <%= @location %></h3>
     <% end %>
     <table>
       <thead>
