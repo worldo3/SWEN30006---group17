@@ -4,9 +4,9 @@ elsif params[:lat] and params[:long]
 	json.lattitude params[:lat]
 	json.longitude params[:long]
 end
+i = 0
 json.prediction (0..@predictions[1].count).map{|x| @predictions.map{|y| y[x]}}.each do |prediction|
 	if !prediction[0].nil?
-		i = 0
 		valuecounter = 0
 		predictcounter = 0 
 		json.period prediction[0]
